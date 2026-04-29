@@ -32,10 +32,8 @@ def init_db():
             {'name': '窗口2', 'window_number': 2},
             {'name': '窗口3', 'window_number': 3},
         ]
-        windows = []
         for wd in windows_data:
-            w = Window.query.filter_by(window_number=wd['window_number']).first()
-            if not w:
+            if not Window.query.filter_by(window_number=wd['window_number']).first():
                 w = Window(
                     name=wd['name'],
                     window_number=wd['window_number'],
@@ -43,4 +41,5 @@ def init_db():
                 )
                 db.session.add(w)
                 print(f"[OK] {wd['name']}已创建完成")
-            windows.append(w)
+        
+        
