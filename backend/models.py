@@ -109,7 +109,6 @@ class DishSales(db.Model):  # 菜品销量表
     id = db.Column(db.Integer, primary_key=True)
     dish_id = db.Column(db.Integer, db.ForeignKey('dishes.id'), nullable=False, index=True)
     date = db.Column(db.Date, nullable=False, index=True)
-    meal_type = db.Column(db.String(10), nullable=False)    # breakfast / lunch / dinner
     quantity = db.Column(db.Integer, nullable=False)
 
 
@@ -119,7 +118,6 @@ class DishPrediction(db.Model):     # 菜品预测表
     id = db.Column(db.Integer, primary_key=True)
     dish_id = db.Column(db.Integer, db.ForeignKey('dishes.id'), nullable=False, index=True)
     date = db.Column(db.Date, nullable=False, index=True)
-    meal_type = db.Column(db.String(10), nullable=False)  # breakfast / lunch / dinner
     predicted_quantity = db.Column(db.Integer, nullable=False)  # 预测出餐量
     adjusted_quantity = db.Column(db.Integer, nullable=True)    # 管理员调整后出餐量
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

@@ -1,3 +1,4 @@
+import datetime
 import sys
 import os
 
@@ -5,7 +6,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from werkzeug.security import generate_password_hash
 from app import create_app
-from models import db, AdminUser, Window, SeatGroup, Seat, Dish, Student, SystemConfig
+from models import db, AdminUser, Window, SeatGroup, Seat, Dish, Student, DailyMenu
 
 
 def init_db():
@@ -70,6 +71,32 @@ def init_db():
                 dd = Dish(**dish, is_active=True)
                 db.session.add(dd)
                 print(f"[OK] {dish['name']}菜品创建完成")
+
+
+        # 初始化今日菜单与库存
+        db.session.flush()
+        today = datetime.date.today()
+        windows = Window.query.order_by(Window.window_number.asc()).all()
+        dishes = Dish.query.order_by(Dish.id.asc()).all()
+        default_stock = 50
+
+        if windows and dishes:
+            for idx, dish in enumerate(dishes):
+                window = windows[idx % len(windows)]
+                existed = DailyMenu.query.filter_by(
+                    dish_id=dish.id,
+                    window_id=window.id,
+                    date=today
+                ).first()
+                if not existed:
+                    db.session.add(DailyMenu(
+                        dish_id=dish.id,
+                        window_id=window.id,
+                        date=today,
+                        stock=default_stock,
+                        is_sold_out=False
+                    ))
+                    print(f"[OK] 今日菜单创建: {dish.name} -> {window.name}, 库存{default_stock}")
 
         # 创建学生账号
         students_data = [
