@@ -7,6 +7,9 @@ from models import db
 from routes.auth import auth_bp
 from routes.orders import orders_bp
 from routes.admin import admin_bp
+from routes.seats import seats_bp
+from routes.kitchen import kitchen_bp
+from routes.prediction import prediction_bp
 
 
 def create_app(config_class=Config):    # 创建后端服务
@@ -22,12 +25,15 @@ def create_app(config_class=Config):    # 创建后端服务
     # 注册蓝图
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(orders_bp, url_prefix='/api')
+    app.register_blueprint(seats_bp, url_prefix='/api')
+    app.register_blueprint(kitchen_bp, url_prefix='/api')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(prediction_bp, url_prefix='/api/admin')
 
     @app.route('/')
     def index():
         return jsonify(success=True, message='Canteen backend is running.')
-    
+
     # 全局错误处理器
     @app.errorhandler(400)
     def bad_request(e):
@@ -48,7 +54,7 @@ def create_app(config_class=Config):    # 创建后端服务
     @app.errorhandler(500)
     def internal_error(e):
         return jsonify(success=False, error='服务器内部错误'), 500
-    
+
     return app
 
 

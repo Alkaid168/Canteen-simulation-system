@@ -1,0 +1,31 @@
+{
+  "feature_columns": [
+    "dish_id",
+    "feature_day_of_week",
+    "feature_is_weekend",
+    "feature_is_holiday",
+    "feature_weather_code",
+    "feature_avg_temperature",
+    "feature_window_1_online",
+    "feature_window_2_online",
+    "feature_window_3_online",
+    "feature_special_event_code"
+  ],
+  "label_column": "label_quantity",
+  "row_count": 155,
+  "dish_count": 5,
+  "params": {
+    "n_estimators": 300,
+    "learning_rate": 0.05,
+    "max_depth": 4,
+    "min_child_weight": 1,
+    "subsample": 0.9,
+    "colsample_bytree": 0.9,
+    "reg_alpha": 0.0,
+    "reg_lambda": 1.0,
+    "random_state": 42,
+    "objective": "reg:squarederror",
+    "eval_metric": "mae",
+    "n_jobs": 1
+  }
+}
