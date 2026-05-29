@@ -4,7 +4,7 @@ from functools import wraps
 from flask import Blueprint, jsonify, request, session
 from werkzeug.security import generate_password_hash
 
-from models import (
+from 软件综合实训.final_canteen.backend.models import (
     db, Dish, Window, SeatGroup, Seat, Student,
     DailyMenu, DishPrediction, Order, OrderSeat, SystemConfig
 )
@@ -31,7 +31,7 @@ def get_dishes():
         'id': d.id,
         'name': d.name,
         'price': float(d.price),
-        'image_url': d.image_url,
+        'image_url': (request.host_url.rstrip('/') + d.image_url) if d.image_url and d.image_url.startswith('/') else d.image_url,
         'is_active': d.is_active,
     } for d in dishes])
 
@@ -68,6 +68,15 @@ def update_dish(dish_id):
 def delete_dish(dish_id):
     dish = Dish.query.get_or_404(dish_id)
     dish.is_active = False
+    db.session.commit()
+    return jsonify(success=True)
+
+
+@admin_bp.route('/dishes/<int:dish_id>/activate', methods=['POST'])
+@admin_required
+def activate_dish(dish_id):
+    dish = Dish.query.get_or_404(dish_id)
+    dish.is_active = True
     db.session.commit()
     return jsonify(success=True)
 
@@ -313,6 +322,19 @@ def adjust_prediction(pred_id):
     if menu:
         menu.stock = adjusted
         menu.is_sold_out = adjusted <= 0
+    else:
+        # 自动创建 DailyMenu 条目
+        online_windows = Window.query.filter_by(is_online=True).order_by(Window.id.asc()).all()
+        if online_windows:
+            window = online_windows[pred.dish_id % len(online_windows)]
+            menu = DailyMenu(
+                dish_id=pred.dish_id,
+                window_id=window.id,
+                date=pred.date,
+                stock=adjusted,
+                is_sold_out=adjusted <= 0,
+            )
+            db.session.add(menu)
 
     db.session.commit()
     return jsonify(success=True, data={

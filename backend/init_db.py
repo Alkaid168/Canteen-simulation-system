@@ -5,8 +5,8 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 from werkzeug.security import generate_password_hash
-from app import create_app
-from models import db, AdminUser, Window, SeatGroup, Seat, Dish, Student, DailyMenu
+from 软件综合实训.final_canteen.backend.app import create_app
+from 软件综合实训.final_canteen.backend.models import db, AdminUser, Window, SeatGroup, Seat, Dish, Student, DailyMenu
 
 
 def init_db():

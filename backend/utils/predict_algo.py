@@ -12,7 +12,7 @@ BACKEND_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
-from models import db, Dish, DishPrediction, DailyMenu, Window, SystemConfig
+from 软件综合实训.final_canteen.backend.models import db, Dish, DishPrediction, DailyMenu, Window, SystemConfig
 
 try:
     from xgboost import XGBRegressor
@@ -243,9 +243,25 @@ def predict_and_upsert(
 
         if update_daily_menu_stock:
             menus = DailyMenu.query.filter_by(dish_id=row["dish_id"], date=target_date).all()
-            for m in menus:
-                m.stock = qty
-                m.is_sold_out = qty <= 0
+            if menus:
+                for m in menus:
+                    m.stock = qty
+                    m.is_sold_out = qty <= 0
+            else:
+                # 当天该菜品还没有 DailyMenu 条目，自动创建
+                # 轮询分配到在线窗口
+                online_windows = Window.query.filter_by(is_online=True).order_by(Window.id.asc()).all()
+                if online_windows:
+                    # 按 dish_id 哈希分配窗口，保证同一菜品始终分配到同一窗口
+                    window = online_windows[row["dish_id"] % len(online_windows)]
+                    menu = DailyMenu(
+                        dish_id=row["dish_id"],
+                        window_id=window.id,
+                        date=target_date,
+                        stock=qty,
+                        is_sold_out=qty <= 0,
+                    )
+                    db.session.add(menu)
 
         results.append({
             "dish_id": row["dish_id"],
@@ -370,7 +386,7 @@ def main():
         return
 
     if args.cmd == "predict":
-        from app import create_app
+        from 软件综合实训.final_canteen.backend.app import create_app
         app = create_app()
         with app.app_context():
             results = predict_and_upsert(

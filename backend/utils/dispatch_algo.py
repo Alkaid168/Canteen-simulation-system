@@ -1,4 +1,4 @@
-from models import Window, Order, SeatGroup, Seat, OrderSeat
+from 软件综合实训.final_canteen.backend.models import Window, Order, SeatGroup, Seat, OrderSeat
 
 
 def assign_window(db_session):

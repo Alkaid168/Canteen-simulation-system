@@ -2,14 +2,14 @@ import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-from config import Config
-from models import db
-from routes.auth import auth_bp
-from routes.orders import orders_bp
-from routes.admin import admin_bp
-from routes.seats import seats_bp
-from routes.kitchen import kitchen_bp
-from routes.prediction import prediction_bp
+from 软件综合实训.final_canteen.backend.config import Config
+from 软件综合实训.final_canteen.backend.models import db
+from 软件综合实训.final_canteen.backend.routes.auth import auth_bp
+from 软件综合实训.final_canteen.backend.routes.orders import orders_bp
+from 软件综合实训.final_canteen.backend.routes.admin import admin_bp
+from 软件综合实训.final_canteen.backend.routes.seats import seats_bp
+from 软件综合实训.final_canteen.backend.routes.kitchen import kitchen_bp
+from 软件综合实训.final_canteen.backend.routes.prediction import prediction_bp
 
 
 def create_app(config_class=Config):    # 创建后端服务

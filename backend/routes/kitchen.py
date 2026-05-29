@@ -2,7 +2,7 @@ import datetime
 
 from flask import Blueprint, jsonify, request
 
-from models import db, Window, Order, OrderSeat, Dish, Seat, DishPrediction
+from 软件综合实训.final_canteen.backend.models import db, Window, Order, OrderSeat, Dish, Seat, DishPrediction
 
 kitchen_bp = Blueprint('kitchen_bp', __name__)
 

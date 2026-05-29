@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, session, current_app
 
-from utils.predict_algo import run_prediction, run_training
+from 软件综合实训.final_canteen.backend.utils.predict_algo import run_prediction, run_training
 
 prediction_bp = Blueprint('prediction_bp', __name__)
 

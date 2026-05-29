@@ -2,8 +2,8 @@ import datetime
 
 from flask import Blueprint, request, session, jsonify
 
-from models import db, Student, Order, OrderDish, OrderSeat, DailyMenu, Dish, Window, Seat
-from utils.dispatch_algo import assign_window, assign_seats
+from 软件综合实训.final_canteen.backend.models import db, Student, Order, OrderDish, OrderSeat, DailyMenu, Dish, Window, Seat
+from 软件综合实训.final_canteen.backend.utils.dispatch_algo import assign_window, assign_seats
 
 orders_bp = Blueprint('orders_bp', __name__)
 
@@ -33,6 +33,11 @@ def create_order():
     for item in items:
         dish_id = item.get('dish_id')
         quantity = item.get('quantity', 0)
+
+        # 检查菜品是否启用
+        dish = Dish.query.get(dish_id)
+        if not dish or not dish.is_active:
+            return jsonify(success=False, error='菜品不可用'), 400
 
         menu = DailyMenu.query.filter_by(dish_id=dish_id, date=today).first()
         if not menu or menu.is_sold_out:
@@ -149,17 +154,21 @@ def get_today_menu():
         .join(Dish, DailyMenu.dish_id == Dish.id)
         .join(Window, DailyMenu.window_id == Window.id)
         .filter(DailyMenu.date == today)
+        .filter(Dish.is_active == True)  # 只返回启用状态的菜品
         .all()
     )
 
     data = []
     for m in menus:
+        image_url = m.dish.image_url
+        if image_url and image_url.startswith('/'):
+            image_url = request.host_url.rstrip('/') + image_url
         data.append({
             'daily_menu_id': m.id,
             'dish_id': m.dish_id,
             'name': m.dish.name,
             'price': float(m.dish.price),
-            'image_url': m.dish.image_url,
+            'image_url': image_url,
             'window_id': m.window_id,
             'window_number': m.window.window_number,
             'window_name': m.window.name,

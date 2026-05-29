@@ -1,7 +1,7 @@
 from flask import Blueprint, request, session, jsonify
 from werkzeug.security import check_password_hash
 
-from models import Student, AdminUser
+from 软件综合实训.final_canteen.backend.models import Student, AdminUser
 
 # 创建蓝图对象
 auth_bp = Blueprint('auth_bp', __name__)

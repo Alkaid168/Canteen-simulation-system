@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from models import db, Seat, SeatGroup
+from 软件综合实训.final_canteen.backend.models import db, Seat, SeatGroup
 
 seats_bp = Blueprint('seats_bp', __name__)
 
